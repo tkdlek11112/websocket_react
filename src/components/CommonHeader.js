@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import './CommonHeader.css';
+import DataInput from './DataInput';
 
 function CommonHeader(){
     const [CommonHeader, setCommonHeader] = useState({
@@ -49,13 +50,8 @@ function CommonHeader(){
         <>
             <h1> COMMON HEADER</h1>
             <div className="div_border">
-            {Object.keys(CommonHeader).map( key =>(
-                <div className="header">
-                    <p className="name_of_header">{key}</p>
-                    <input className="header" type='text' id={key}
-                           value={CommonHeader[`${key}`]}
-                           onChange={handleChangeText}/>
-                </div>
+            {Object.keys(CommonHeader).map( (item, index) =>(
+                    <DataInput item={item} state={CommonHeader} onChange={handleChangeText} key={index}></DataInput>
                 ))}
             </div>
         </>

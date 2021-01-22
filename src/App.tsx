@@ -3,14 +3,20 @@ import WebSocketProvider from './websocket/WebSocketProvider';
 import Chatting from './components/Chatting';
 import TextInputBox from './components/TextInputBox';
 import CommonHeader from "./components/CommonHeader";
+import Approval from "./components/Approval";
+import Message from "./components/Message";
+import Fep from "./components/Fep";
 
 function App() {
     return (
         <div className="App">
             <WebSocketProvider>
                 <CommonHeader/>
-                <Chatting />
-                <TextInputBox />
+                <Approval/>
+                <Message/>
+                <Fep/>
+                <Chatting/>
+                <TextInputBox/>
             </WebSocketProvider>
         </div>
     );
