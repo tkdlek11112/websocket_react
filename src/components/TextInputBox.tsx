@@ -40,10 +40,9 @@ function TextInputBox(){
         setMessage('');
     }
 
-    const { GrpcEchoReq,GrpcCommonHeader,GrpcApproval, GrpcFep, GrpcMessage } = require('../protos/data/SonaxMessage_pb.js');
-    console.log('data'  );
-    console.log(GrpcEchoReq.GrpcEchoIn);
+
     const protoSubmit = () =>{
+        const { GrpcEchoReq,GrpcCommonHeader,GrpcApproval, GrpcFep, GrpcMessage } = require('../protos/data/SonaxMessage_pb.js');
         const request = new GrpcEchoReq();
         const test = new GrpcEchoReq.GrpcEchoIn(['hiaa']);
         const commonHeader = new GrpcCommonHeader();
@@ -78,11 +77,72 @@ function TextInputBox(){
         ws.current.send(a);
     }
 
+    const sonat_submit = () =>{
+        const { GrpcSpotNewOrdReq,GrpcCommonHeader } = require('../protos/data/SonatMessage_pb.js');
+
+        const request = new GrpcSpotNewOrdReq();
+        const test = new GrpcSpotNewOrdReq.GrpcSpotNewOrdIn(['01201000002','0423','KR7005930003',"100", "64700", "2", '00']);
+        const commonHeader = new GrpcCommonHeader();
+        commonHeader.setThIfTcd("0");
+        request.setCommonHeader(commonHeader);
+        request.setData(test);
+        console.log('root' + request);
+        const bytes = request.serializeBinary();
+        console.log(bytes);
+        const data = bytes.toString();
+
+        console.log(data);
+        const bytes22 = 'ORDER00002';
+        const bytes33 = stringToUint(bytes22)
+        console.log(bytes33);
+        console.log('byte' + request.byte)
+        console.log('obj' + request.toObject());
+        const a = Buffer.alloc(69);
+        a.fill('ORDER00002');
+        for (var i = 10; i < 69; i++){
+            a[i] = bytes[i-10];
+        }
+
+        ws.current.send(a);
+    }
+
+
+    const invest0025_submit = () =>{
+        const { GrpcCommonHeader, Invest0025Req } = require('../protos/data/INVEST0025_pb.js');
+
+        const request = new Invest0025Req();
+        const test = new Invest0025Req.Invest0025In(['hello','world']);
+        const commonHeader = new GrpcCommonHeader();
+        commonHeader.setThIfTcd("T");
+        request.setCommonHeader(commonHeader);
+        request.setData(test);
+        console.log('root' + request);
+        const bytes = request.serializeBinary();
+        console.log(bytes.length);
+        const data = bytes.toString();
+
+        console.log(data);
+        const bytes22 = 'INVEST0025';
+        const bytes33 = stringToUint(bytes22)
+        console.log(bytes33);
+        console.log('byte' + request.byte)
+        console.log('obj' + request.toObject());
+        const a = Buffer.alloc(31);
+        a.fill('INVEST0025');
+        for (var i = 10; i < 31; i++){
+            a[i] = bytes[i-10];
+        }
+
+        ws.current.send(a);
+    }
+
     return (
         <div>
             <input type="text" value={message} onChange={handleChangeText}></input>
             <button type="button" onClick={handleClickSubmit}>Send!</button>
             <button type="button" onClick={protoSubmit}>proto echo Send!</button>
+            <button type="button" onClick={sonat_submit}>proto trade Send!</button>
+            <button type="button" onClick={invest0025_submit}>proto invest Send!</button>
         </div>
     )
 }

@@ -5,7 +5,6 @@ export const WebSocketContext = React.createContext<any>(null);
 export default ({children}: {children: React.ReactNode}) => {
     const webSocketUrl = `wss://dev.neoredbull.com`
     let ws = useRef<WebSocket | null>(null);
-
     if(!ws.current){
         ws.current = new WebSocket(webSocketUrl);
         ws.current.onopen = () => {
