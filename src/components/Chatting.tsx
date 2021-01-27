@@ -16,6 +16,8 @@ function Chatting() {
     ws.current.onmessage = (evt: MessageEvent) => {
         const { GrpcEchoRes} = require('../protos/data/SonaxMessage_pb.js');
         const data = evt.data
+        console.log("들어온데이터");
+        console.log(data);
         const ret_bytes = Buffer.alloc(data.length);
         var encoder = new TextEncoder();
 

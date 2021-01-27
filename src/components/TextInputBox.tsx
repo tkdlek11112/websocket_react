@@ -48,8 +48,6 @@ function TextInputBox(){
         const test = new GrpcEchoReq.GrpcEchoIn(['hiaa']);
         const commonHeader = new GrpcCommonHeader();
         commonHeader.setThIfTcd("0");
-        const approval = new GrpcApproval();
-        approval.setMgrApvOcurYn("");
         const fep = new GrpcFep();
         const message = new GrpcMessage();
         console.log('button'  );
@@ -69,9 +67,41 @@ function TextInputBox(){
         console.log(bytes33);
         console.log('byte' + request.byte)
         console.log('obj' + request.toObject());
-        const a = Buffer.alloc(28);
+        const a = Buffer.alloc(23);
         a.fill('ORDER00001');
-        for (var i = 10; i < 28; i++){
+        for (var i = 10; i < 23; i++){
+            a[i] = bytes[i-10];
+        }
+
+        ws.current.send(a);
+    }
+
+    const InvestSubmit = () =>{
+        const { GrpcCommonHeader, Invest0025Req } = require('../protos/data/INVEST0025_pb.js');
+
+        const request = new Invest0025Req();
+        const test = new Invest0025Req.Invest0025In(['hello','world']);
+        const commonHeader = new GrpcCommonHeader();
+        commonHeader.setThIfTcd("T");
+        request.setCommonHeader(commonHeader);
+        // request.setApproval(approval);
+        // request.setFep(fep);
+        // request.setMessage(message);
+        request.setData(test);
+        console.log('root' + request);
+        const bytes = request.serializeBinary();
+        console.log(bytes);
+        const data = bytes.toString();
+
+        console.log(data);
+        const bytes22 = 'INVEST0025';
+        const bytes33 = stringToUint(bytes22)
+        console.log(bytes33);
+        console.log('byte' + request.byte)
+        console.log('obj' + request.toObject());
+        const a = Buffer.alloc(31);
+        a.fill('INVEST0025');
+        for (var i = 10; i < 31; i++){
             a[i] = bytes[i-10];
         }
 
@@ -83,6 +113,7 @@ function TextInputBox(){
             <input type="text" value={message} onChange={handleChangeText}></input>
             <button type="button" onClick={handleClickSubmit}>Send!</button>
             <button type="button" onClick={protoSubmit}>proto echo Send!</button>
+            <button type="button" onClick={InvestSubmit}>proto invest Send!</button>
         </div>
     )
 }

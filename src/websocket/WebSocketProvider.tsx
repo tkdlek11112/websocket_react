@@ -8,6 +8,7 @@ export default ({children}: {children: React.ReactNode}) => {
 
     if(!ws.current){
         ws.current = new WebSocket(webSocketUrl);
+        ws.current.binaryType = 'blob';
         ws.current.onopen = () => {
             console.log("connected to " + webSocketUrl);
         }
