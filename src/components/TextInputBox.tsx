@@ -1,5 +1,6 @@
 import React, {useState, useContext} from "react";
 import {WebSocketContext} from "../websocket/WebSocketProvider";
+import {postSectorGroup} from "../apis/ApiTest"
 
 function stringToUint(str: any) {
     var string = btoa(unescape(encodeURIComponent(str))),
@@ -42,36 +43,52 @@ function TextInputBox(){
 
 
     const protoSubmit = () =>{
-        const { GrpcEchoReq,GrpcCommonHeader,GrpcApproval, GrpcFep, GrpcMessage } = require('../protos/data/SonaxMessage_pb.js');
-        const request = new GrpcEchoReq();
-        const test = new GrpcEchoReq.GrpcEchoIn(['hiaa']);
-        const commonHeader = new GrpcCommonHeader();
-        commonHeader.setThIfTcd("0");
-        const approval = new GrpcApproval();
-        approval.setMgrApvOcurYn("");
-        const fep = new GrpcFep();
-        const message = new GrpcMessage();
-        console.log('button'  );
+        const { SubScribe, CommonHeader } = require('../protos/data/SubScribe_pb.js');
+        const request = new SubScribe();
+        const test = new SubScribe.SubScribeIn(['reserve','S30',['330590',]]);
+        const commonHeader = new CommonHeader();
+        commonHeader.setThTrTcd(0);
+        commonHeader.setThIfTcd("Z");
         request.setCommonHeader(commonHeader);
-        // request.setApproval(approval);
-        // request.setFep(fep);
-        // request.setMessage(message);
+        request.setDataList([test,]);
+        console.log('root' + request);
+        const bytes = request.serializeBinary();
+        console.log(bytes.length);
+        const total_length = 77 + bytes.length;
+        const a = Buffer.alloc(total_length);
+        a.fill('AxxZPTS20210316112354321876857368372AxxxxxxxxxxLogin                   xxxxxx');
+        for (var i = 77; i < total_length; i++){
+            a[i] = bytes[i-77];
+        }
+        ws.current.send(a);
+    }
+
+    const protoLoginSubmit = () =>{
+        const { LoginReq, CommonHeader } = require('../protos/data/Login_pb.js');
+        const request = new LoginReq();
+        const test = new LoginReq.LoginIn(["testtoken",]);
+        const commonHeader = new CommonHeader();
+        commonHeader.setThTrTcd('S');
+        commonHeader.setThIfTcd("U");
+        request.setCommonHeader(commonHeader);
         request.setData(test);
         console.log('root' + request);
         const bytes = request.serializeBinary();
-        console.log(bytes);
-        const data = bytes.toString();
+        console.log(bytes.length);
 
-        console.log(data);
-        const bytes22 = 'ORDER00001';
-        const bytes33 = stringToUint(bytes22)
-        console.log(bytes33);
-        console.log('byte' + request.byte)
-        console.log('obj' + request.toObject());
-        const a = Buffer.alloc(28);
-        a.fill('ORDER00001');
-        for (var i = 10; i < 28; i++){
-            a[i] = bytes[i-10];
+        const total_length = 77 + bytes.length;
+        const a = Buffer.alloc(total_length);
+        a.fill('S' + // S, R, A, B
+            'xx' + // reserved
+            'U' +  // Z: MCI
+            'PTS20210316112354321876857368372' + // GUID
+            'Axxxxxxxxxx' + // os info
+            'Login                   ' + // TR ID
+            'x' + // Error Code
+            'xxxxx' // Error Message Code
+        );
+        for (var i = 77; i < total_length; i++){
+            a[i] = bytes[i-77];
         }
 
         ws.current.send(a);
@@ -82,6 +99,7 @@ function TextInputBox(){
 
         const request = new GrpcSpotNewOrdReq();
         const test = new GrpcSpotNewOrdReq.GrpcSpotNewOrdIn(['01201000002','0423','KR7005930003',"100", "64700", "2", '00']);
+
         const commonHeader = new GrpcCommonHeader();
         commonHeader.setThIfTcd("0");
         request.setCommonHeader(commonHeader);
@@ -105,7 +123,6 @@ function TextInputBox(){
 
         ws.current.send(a);
     }
-
 
     const invest0025_submit = () =>{
         const { GrpcCommonHeader, Invest0025Req } = require('../protos/data/INVEST0025_pb.js');
@@ -136,13 +153,23 @@ function TextInputBox(){
         ws.current.send(a);
     }
 
+    const sectorGroup_submit = () => {
+        const ret = postSectorGroup();
+        ret.then((data)=>{
+            console.log(data);
+        });
+
+    }
+
     return (
         <div>
             <input type="text" value={message} onChange={handleChangeText}></input>
             <button type="button" onClick={handleClickSubmit}>Send!</button>
             <button type="button" onClick={protoSubmit}>proto echo Send!</button>
+            <button type="button" onClick={protoLoginSubmit}>proto Login Send!</button>
             <button type="button" onClick={sonat_submit}>proto trade Send!</button>
             <button type="button" onClick={invest0025_submit}>proto invest Send!</button>
+            <button type="button" onClick={sectorGroup_submit}>rest SectorGroup</button>
         </div>
     )
 }
