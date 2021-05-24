@@ -45,10 +45,10 @@ function TextInputBox(){
     const protoSubmit = () =>{
         const { SubScribe, CommonHeader } = require('../protos/data/SubScribe_pb.js');
         const request = new SubScribe();
-        const test = new SubScribe.SubScribeIn(['reserve','S30',['330590',]]);
+        const test = new SubScribe.SubScribeIn([0,'S01',['001A000660',]]);
         const commonHeader = new CommonHeader();
-        commonHeader.setThTrTcd(0);
-        commonHeader.setThIfTcd("Z");
+        commonHeader.setThTrTcd("A");
+        commonHeader.setThIfTcd("T");
         request.setCommonHeader(commonHeader);
         request.setDataList([test,]);
         console.log('root' + request);
@@ -56,7 +56,7 @@ function TextInputBox(){
         console.log(bytes.length);
         const total_length = 77 + bytes.length;
         const a = Buffer.alloc(total_length);
-        a.fill('AxxZPTS20210316112354321876857368372AxxxxxxxxxxLogin                   xxxxxx');
+        a.fill('AxxTPTS20210316112354321876857368372AxxxxxxxxxxSubscribe               xxxxxx');
         for (var i = 77; i < total_length; i++){
             a[i] = bytes[i-77];
         }

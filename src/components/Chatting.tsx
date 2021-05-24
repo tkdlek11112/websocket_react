@@ -1,6 +1,14 @@
 import React, {useContext, useState} from "react";
 import {WebSocketContext} from "../websocket/WebSocketProvider";
 
+function bytesToSring(bytes:any) {
+    var chars = [];
+    for(var i = 0, n = bytes.length; i < n;) {
+        chars.push(((bytes[i++] & 0xff) << 8) | (bytes[i++] & 0xff));
+    }
+    return String.fromCharCode.apply(null, chars);
+}
+
 function Chatting() {
     const ws = useContext(WebSocketContext);
     const [items, setItems] = useState<string[]>([]);
@@ -16,13 +24,19 @@ function Chatting() {
     const { GrpcSpotNewOrdRes} = require('../protos/data/SonatMessage_pb.js');
     const { Invest0025Res} = require('../protos/data/INVEST0025_pb.js');
 
-    ws.current.onmessage = (evt: MessageEvent) => {
+    ws.current.onmessage = async (evt: MessageEvent) => {
         console.log('수신');
         console.log(evt);
         const data = evt.data
         // const tr_number = data.substr(0,10)
-        console.log(data);
+        const str_blob = await (new Response(data)).text();
+        console.log(str_blob);
         const tr_number = "xxxx"
+        const uint8array = new TextEncoder().encode(data);
+        console.log("출력 바이트", uint8array.toString());
+        var str_output = bytesToSring(uint8array);
+        console.log("출력 스트링", str_output);
+
         const byte_length = (new TextEncoder().encode(data)).length
         console.log('길이');
         console.log(byte_length);
@@ -31,8 +45,10 @@ function Chatting() {
         encoder.encodeInto(data, ret_bytes);
         console.log('바이트변환');
         console.log(ret_bytes);
-        const ret = ret_bytes.subarray(10, byte_length);
+        console.log(bytesToSring(ret_bytes));
+        const ret = ret_bytes.subarray(0, 58);
         console.log(ret);
+        console.log(bytesToSring(ret));
 
         // if(tr_number == 'ORDER00001'){
         //     console.log(tr_number);
